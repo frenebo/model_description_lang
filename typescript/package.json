@@ -18,6 +18,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@types/ace": "0.0.42",
     "js-yaml": "^3.13.1"
   }
 }
