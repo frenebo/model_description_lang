@@ -1,12 +1,14 @@
 
-type ProgramNode = {
+type StatementSeriesNode = {
     statements: StatementNode[];
 }
 
-type StatementNode = UsingStatement;
+type StatementNode = {
+    type: "using";
+    statement: UsingStatement;
+};
 
 type UsingStatement = {
-    type: "using_statement";
     source_str: string;
     alias: string;
-}
+};
