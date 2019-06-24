@@ -1,14 +1,13 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <title>title</title>
-    <script type="module" src="scripts/test.js"></script>
-  </head>
-  <body>
-    <div id="divId1"></div>
-    <script type="module">
-      import { showText } from "./scripts/test.js";;
-      showText(document.getElementById("divId1"));
-    </script>
-  </body>
+<head>
+  <script src="./dependencies/ace-src/ace.js"></script>
+  <script type="module" src="./scripts/main.js"></script>
+</head>
+<body>
+  <div id="maindiv"></div>
+  <script type="module">
+    import { run } from "./scripts/main.js";
+    run(document.getElementById("maindiv"));
+  </script>
+</body>
 </html>

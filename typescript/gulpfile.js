@@ -9,6 +9,11 @@ gulp.task("clean", () => del(["build"]));
 
 gulp.task("copy", () => gulp.src(["app/**/*", "!app/**/*.ts"]).pipe(gulp.dest("build")));
 
+gulp.task("ace_copy", () => {
+  return gulp.src("node_modules/ace-builds/src-noconflict/**/*")
+    .pipe(gulp.dest("build/dependencies/ace-src"));
+});
+
 gulp.task("start_server", () => {
   return connect.server({
     root: "build",
@@ -29,6 +34,7 @@ gulp.task("serve", gulp.series(
   "clean",
   "ts",
   "copy",
+  "ace_copy",
   "start_server",
 ));
 
