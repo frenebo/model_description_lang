@@ -1,7 +1,7 @@
 export enum TokenType {
     EndOfInput = "EndOfInput",
     Whitespace = "Whitespace",
-    Newline = "Newline",
+    Semicolon = "Semicolon",
 
     UsingKeyword = "UsingKeyword",
     AsKeyword = "AsKeyword",

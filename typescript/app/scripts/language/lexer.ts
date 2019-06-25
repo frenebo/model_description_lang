@@ -13,10 +13,10 @@ export class Lexer {
     private static readonly exact_matches = new Map<string, TokenType>([
         ["using", TokenType.UsingKeyword],
         ["as", TokenType.AsKeyword],
-        ["\n", TokenType.Newline],
+        [";", TokenType.Semicolon],
     ]);
 
-    private static readonly whitespace_chars: string[] = [" ", "\t"];
+    private static readonly whitespace_chars: string[] = [" ", "\t", "\n"];
 
     private static readonly alpha_chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
     private static readonly num_chars = "1234567890";
@@ -46,7 +46,7 @@ export class Lexer {
         return tokens;
     }
 
-    private parse_string_literal(text: string, start_idx: number): Token | null {
+    private static parse_string_literal(text: string, start_idx: number): Token | null {
         // let
         if (text[start_idx] != "\"") return null;
         const next_quotation_mark = text.substring(start_idx + 1).indexOf("\"");
@@ -57,7 +57,7 @@ export class Lexer {
         return new Token(TokenType.StringLiteral, text.substring(start_idx, start_idx + consumed));
     }
 
-    private parse_number_literal(text: string, start_idx: number): Token | null {
+    private static parse_number_literal(text: string, start_idx: number): Token | null {
         let consumed = 0;
         let seen_period = false;
         // do something with each of these later?
@@ -84,7 +84,7 @@ export class Lexer {
         return new Token(TokenType.NumberLiteral, text.substring(start_idx, start_idx + consumed));
     }
 
-    private parse_identifier(text: string, start_idx: number): Token | null {
+    private static parse_identifier(text: string, start_idx: number): Token | null {
         if (Lexer.alpha_chars.indexOf(text[start_idx]) == -1) return null;
         let consumed = 1;
         while (text.length - start_idx - consumed > 0 &&
@@ -96,7 +96,7 @@ export class Lexer {
         return new Token(TokenType.Identifier, text.substring(start_idx, start_idx + consumed));
     }
 
-    private parse_whitespace(text: string, start_idx: number): Token | null {
+    private static parse_whitespace(text: string, start_idx: number): Token | null {
         let consumed = 0;
 
         while (text.length - start_idx - consumed > 0 &&
@@ -111,11 +111,11 @@ export class Lexer {
 
     private lex_tok(text: string, start_idx: number): Token | LexError {
         const matches: Array<Token | null> = [
-            this.exact_matches,
-            this.parse_whitespace,
-            this.parse_string_literal,
-            this.parse_identifier,
-            this.parse_number_literal,
+            Lexer.lex_exact_matches,
+            Lexer.parse_whitespace,
+            Lexer.parse_string_literal,
+            Lexer.parse_identifier,
+            Lexer.parse_number_literal,
         ].map(func => func(text, start_idx));
 
         let longest_match: Token | null = null;
@@ -133,7 +133,7 @@ export class Lexer {
         return longest_match;
     }
 
-    private exact_matches(text: string, start_idx: number): Token | null {
+    private static lex_exact_matches(text: string, start_idx: number): Token | null {
         for (const [match_text, match_tok_type] of Lexer.exact_matches) {
             if (
                 match_text.length <= text.length &&
