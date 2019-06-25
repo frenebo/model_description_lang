@@ -2,6 +2,11 @@ export enum TokenType {
     EndOfInput = "EndOfInput",
     Whitespace = "Whitespace",
     Semicolon = "Semicolon",
+    Period = "Period",
+    EqualsSign = "EqualsSign",
+    Colon = "Colon",
+    OpenBrace = "OpenBrace",
+    CloseBrace = "CloseBrace",
 
     UsingKeyword = "UsingKeyword",
     AsKeyword = "AsKeyword",

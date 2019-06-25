@@ -14,11 +14,16 @@ export class Lexer {
         ["using", TokenType.UsingKeyword],
         ["as", TokenType.AsKeyword],
         [";", TokenType.Semicolon],
+        [".", TokenType.Period],
+        ["=", TokenType.EqualsSign],
+        [":", TokenType.Colon],
+        ["{", TokenType.OpenBrace],
+        ["}", TokenType.CloseBrace],
     ]);
 
     private static readonly whitespace_chars: string[] = [" ", "\t", "\n"];
 
-    private static readonly alpha_chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    private static readonly norm_identifier_chars = "_qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
     private static readonly num_chars = "1234567890";
 
     constructor() {
@@ -80,15 +85,17 @@ export class Lexer {
             consumed++;
         } while(text.length - start_idx - consumed > 0);
 
-        if (before_period_digits + after_period_digits == 0) return null;
+        if (before_period_digits == 0) return null;
+        if (seen_period && after_period_digits == 0) return null;
+
         return new Token(TokenType.NumberLiteral, text.substring(start_idx, start_idx + consumed));
     }
 
     private static parse_identifier(text: string, start_idx: number): Token | null {
-        if (Lexer.alpha_chars.indexOf(text[start_idx]) == -1) return null;
+        if (Lexer.norm_identifier_chars.indexOf(text[start_idx]) == -1) return null;
         let consumed = 1;
         while (text.length - start_idx - consumed > 0 &&
-                (Lexer.alpha_chars + Lexer.num_chars).indexOf(text[start_idx + consumed]) != -1
+                (Lexer.norm_identifier_chars + Lexer.num_chars).indexOf(text[start_idx + consumed]) != -1
         ) {
             consumed++;
         }

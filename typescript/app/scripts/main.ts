@@ -25,7 +25,7 @@ export function run(div: HTMLDivElement): void {
     const lexed = new Lexer().lex(code);
     console.log(lexed);
     if (lexed instanceof LexError) return;
-    const parsed = new Parser().parse_statement_series(lexed);
+    const parsed = Parser.parse_statement_series(lexed);
     console.log(parsed);
     // const tokens = lex(code);
     // const parse_node = parseProgram(tokens);

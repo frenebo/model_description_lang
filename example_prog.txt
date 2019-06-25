@@ -1,2 +1,28 @@
-using "builtin/layers/conv2d" as Conv2D
-using "builtin/layers/activation" as Activation
+using "builtin/layers/conv2d" as Conv2D;
+using "builtin/layers/activation" as Activation;
+using "builtin/types/tensor" as Tensor;
+
+.module = {
+    .construct_args = {
+    };
+
+    .input = Tensor[?,?,3];
+
+    .output = Tensor[10];
+
+    .layers = {
+        "conv_layer": Conv2D {
+            filters: 10;
+            kernel_size: (3, 3);
+        };
+
+        "pool": GlobalAveragePooling2D {};
+    };
+
+    # todo later
+    .connections = {
+        ..input -> ..layers/conv_layer
+        ..layers/conv_layer -> ..layers/pool
+        ..layers/pool -> ..output
+    };
+};
