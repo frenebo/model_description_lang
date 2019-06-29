@@ -93,11 +93,15 @@ export class Parser {
         else return longest_error as ParseError;
     }
 
-    private static parse_definition_body(tokens: Token[], start_idx: number): ParseResult<DefinitionBody> | ParseError {
+    private static parse_definition_body(tokens: Token[], start_idx: number): ParseResult<ObjExpression> | ParseError {
         let consumed = 0;
-        const try_consume_open_brace = Parser.consume_toktypes([TokenType.OpenBrace], tokens, start_idx + consumed);
-        if (try_consume_open_brace instanceof ParseError) return try_consume_open_brace;
-        consumed += try_consume_open_brace.length;
+        const try_consume_name_and_open_brace = Parser.consume_toktypes(
+            [TokenType.Identifier, TokenType.OpenBrace],
+            tokens,
+            start_idx + consumed,
+        );
+        if (try_consume_name_and_open_brace instanceof ParseError) return try_consume_name_and_open_brace;
+        consumed += try_consume_name_and_open_brace.length;
 
         const try_parse_statement_series = Parser.parse_statement_series(
             tokens,
@@ -111,7 +115,8 @@ export class Parser {
         if (try_consume_close_brace instanceof ParseError) return try_consume_close_brace;
         consumed += try_consume_close_brace.length;
 
-        return new ParseResult<DefinitionBody>({
+        return new ParseResult<ObjExpression>({
+            cls_name: try_consume_name_and_open_brace[0].text,
             statement_series: try_parse_statement_series.parsed,
         }, consumed);
     }
