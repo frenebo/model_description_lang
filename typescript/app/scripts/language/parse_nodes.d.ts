@@ -21,15 +21,19 @@ type UsingStatement = {
 
 type AttributeDefinitionStatement = {
     attr_name: string;
-    body: ObjExpression;
+    body: Expression;
 };
 
 type NamedAttributeDefinitionStatement = {
     attr_name: string;
-    body: ObjExpression;
+    body: Expression;
 };
 
-type ObjExpression = {
+type Expression = {
+    type: "obj_expression";
     cls_name: string;
     statement_series: StatementSeriesNode;
+} | {
+    type: "list_expression";
+    items: Expression[],
 };

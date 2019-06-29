@@ -19,6 +19,9 @@ export class Lexer {
         [":", TokenType.Colon],
         ["{", TokenType.OpenBrace],
         ["}", TokenType.CloseBrace],
+        ["[", TokenType.OpenBracket],
+        ["]", TokenType.CloseBracket],
+        [",", TokenType.Comma],
     ]);
 
     private static readonly whitespace_chars: string[] = [" ", "\t", "\n"];
@@ -46,7 +49,7 @@ export class Lexer {
         // Remove whitespace
         tokens = tokens.filter((tok) => tok.token_type != TokenType.Whitespace);
 
-        tokens.push(new Token(TokenType.EndOfInput, ""));
+        tokens.push(new Token(TokenType.EndOfInput, "", text.length - 1));
 
         return tokens;
     }
@@ -59,7 +62,7 @@ export class Lexer {
 
         const consumed = next_quotation_mark + 2;
 
-        return new Token(TokenType.StringLiteral, text.substring(start_idx, start_idx + consumed));
+        return new Token(TokenType.StringLiteral, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
     private static parse_number_literal(text: string, start_idx: number): Token | null {
@@ -88,7 +91,7 @@ export class Lexer {
         if (before_period_digits == 0) return null;
         if (seen_period && after_period_digits == 0) return null;
 
-        return new Token(TokenType.NumberLiteral, text.substring(start_idx, start_idx + consumed));
+        return new Token(TokenType.NumberLiteral, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
     private static parse_identifier(text: string, start_idx: number): Token | null {
@@ -100,7 +103,7 @@ export class Lexer {
             consumed++;
         }
 
-        return new Token(TokenType.Identifier, text.substring(start_idx, start_idx + consumed));
+        return new Token(TokenType.Identifier, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
     private static parse_whitespace(text: string, start_idx: number): Token | null {
@@ -113,7 +116,7 @@ export class Lexer {
         }
 
         if (consumed == 0) return null;
-        else return new Token(TokenType.Whitespace, text.substring(start_idx, start_idx + consumed));
+        else return new Token(TokenType.Whitespace, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
     private lex_tok(text: string, start_idx: number): Token | LexError {
@@ -146,7 +149,7 @@ export class Lexer {
                 match_text.length <= text.length &&
                 text.substr(start_idx, match_text.length) == match_text
             ) {
-                    return new Token(match_tok_type, match_text);
+                    return new Token(match_tok_type, match_text, start_idx);
             }
         }
 

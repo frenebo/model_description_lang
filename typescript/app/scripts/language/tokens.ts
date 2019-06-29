@@ -5,8 +5,11 @@ export enum TokenType {
     Period = "Period",
     EqualsSign = "EqualsSign",
     Colon = "Colon",
+    Comma = "Comma",
     OpenBrace = "OpenBrace",
     CloseBrace = "CloseBrace",
+    OpenBracket = "OpenBracket",
+    CloseBracket = "CloseBracket",
 
     UsingKeyword = "UsingKeyword",
     AsKeyword = "AsKeyword",
@@ -19,6 +22,7 @@ export class Token {
     constructor(
         public readonly token_type: TokenType,
         public readonly text: string,
+        public readonly text_pos: number,
     ) {
 
     }
