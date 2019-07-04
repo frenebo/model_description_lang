@@ -10,12 +10,13 @@ export enum TokenType {
     CloseBrace = "CloseBrace",
     OpenBracket = "OpenBracket",
     CloseBracket = "CloseBracket",
+    QuestionMark = "QuestionMark",
 
     UsingKeyword = "UsingKeyword",
     AsKeyword = "AsKeyword",
     StringLiteral = "StringLiteral",
     NumberLiteral = "NumberLiteral",
-    Identifier = "Identifier",
+    Name = "Name",
 };
 
 export class Token {

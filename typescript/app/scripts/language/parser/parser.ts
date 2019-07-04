@@ -48,7 +48,7 @@ export class Parser {
                 TokenType.UsingKeyword,
                 TokenType.StringLiteral,
                 TokenType.AsKeyword,
-                TokenType.Identifier,
+                TokenType.Name,
                 TokenType.Semicolon,
             ],
             tokens,
@@ -110,6 +110,37 @@ export class Parser {
         }
     }
 
+    private static parse_question_mark_expression(tokens: Token[], start_idx: number): ParseResult<Expression> | ParseError {
+        let consumed = 0;
+        const try_consume_question_mark = Parser.consume_toktypes(
+            [TokenType.QuestionMark],
+            tokens,
+            start_idx + consumed,
+        );
+        if (try_consume_question_mark instanceof ParseError) return try_consume_question_mark;
+        consumed += try_consume_question_mark.length;
+
+        return new ParseResult<Expression>({
+            type: "question_mark_expression",
+        }, consumed);
+    }
+
+    private static parse_number_literal_expression(tokens: Token[], start_idx: number): ParseResult<Expression> | ParseError {
+        let consumed = 0;
+        const try_consume_number_literal = Parser.consume_toktypes(
+            [TokenType.NumberLiteral],
+            tokens,
+            start_idx + consumed,
+        );
+        if (try_consume_number_literal instanceof ParseError) return try_consume_number_literal;
+        consumed += try_consume_number_literal.length;
+
+        return new ParseResult<Expression>({
+            type: "number_literal_expression",
+            number_value: parseFloat(try_consume_number_literal[0].text),
+        }, consumed);
+    }
+
     private static parse_list_expression(tokens: Token[], start_idx: number): ParseResult<Expression> | ParseError {
         let consumed = 0;
 
@@ -155,7 +186,7 @@ export class Parser {
     private static parse_obj_expression(tokens: Token[], start_idx: number): ParseResult<Expression> | ParseError {
         let consumed = 0;
         const try_consume_name_and_open_brace = Parser.consume_toktypes(
-            [TokenType.Identifier, TokenType.OpenBrace],
+            [TokenType.Name, TokenType.OpenBrace],
             tokens,
             start_idx + consumed,
         );
@@ -185,6 +216,8 @@ export class Parser {
         const results: Array<ParseResult<Expression> | ParseError> = [
             Parser.parse_obj_expression,
             Parser.parse_list_expression,
+            Parser.parse_number_literal_expression,
+            Parser.parse_question_mark_expression,
         ].map(func => func(tokens, start_idx));
 
         return Parser.longest_parsed_or_furthest_error<Expression>(results);
@@ -195,7 +228,7 @@ export class Parser {
         const try_consume_start = Parser.consume_toktypes(
             [
                 TokenType.Period,
-                TokenType.Identifier,
+                TokenType.Name,
                 TokenType.EqualsSign,
             ],
             tokens,
@@ -219,38 +252,38 @@ export class Parser {
         }, consumed);
     }
 
-    private static parse_named_attr_definition(tokens: Token[], start_idx: number): ParseResult<StatementNode> | ParseError {
-        const try_consume_start = Parser.consume_toktypes(
-            [
-                TokenType.StringLiteral,
-                TokenType.Colon,
-            ],
-            tokens,
-            start_idx,
-        );
-        if (try_consume_start instanceof ParseError) return try_consume_start;
+    // private static parse_named_attr_definition(tokens: Token[], start_idx: number): ParseResult<StatementNode> | ParseError {
+    //     const try_consume_start = Parser.consume_toktypes(
+    //         [
+    //             TokenType.StringLiteral,
+    //             TokenType.Colon,
+    //         ],
+    //         tokens,
+    //         start_idx,
+    //     );
+    //     if (try_consume_start instanceof ParseError) return try_consume_start;
 
-        const attr_name = Parser.parse_string_literal(try_consume_start[0]);
-        let consumed = try_consume_start.length;
+    //     const attr_name = Parser.parse_string_literal(try_consume_start[0]);
+    //     let consumed = try_consume_start.length;
 
-        const try_parse_body = Parser.parse_expression(tokens, start_idx + consumed);
-        if (try_parse_body instanceof ParseError) return try_parse_body;
-        consumed += try_parse_body.consumed;
+    //     const try_parse_body = Parser.parse_expression(tokens, start_idx + consumed);
+    //     if (try_parse_body instanceof ParseError) return try_parse_body;
+    //     consumed += try_parse_body.consumed;
 
-        return new ParseResult<StatementNode>({
-            type: "named_attr_definition",
-            statement: {
-                attr_name: attr_name,
-                body: try_parse_body.parsed,
-            }
-        }, consumed);
-    }
+    //     return new ParseResult<StatementNode>({
+    //         type: "named_attr_definition",
+    //         statement: {
+    //             attr_name: attr_name,
+    //             body: try_parse_body.parsed,
+    //         }
+    //     }, consumed);
+    // }
 
     private static parse_statement(tokens: Token[], start_idx: number): ParseResult<StatementNode> | ParseError {
         const results: Array<ParseResult<StatementNode> | ParseError> = [
             Parser.parse_using_statement,
             Parser.parse_attr_definition,
-            Parser.parse_named_attr_definition,
+            // Parser.parse_named_attr_definition,
         ].map(func => func(tokens, start_idx));
 
         return Parser.longest_parsed_or_furthest_error<StatementNode>(results);

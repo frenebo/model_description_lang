@@ -22,11 +22,12 @@ export class Lexer {
         ["[", TokenType.OpenBracket],
         ["]", TokenType.CloseBracket],
         [",", TokenType.Comma],
+        ["?", TokenType.QuestionMark],
     ]);
 
     private static readonly whitespace_chars: string[] = [" ", "\t", "\n"];
 
-    private static readonly norm_identifier_chars = "_qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    private static readonly normal_name_chars = "_qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
     private static readonly num_chars = "1234567890";
 
     constructor() {
@@ -94,16 +95,16 @@ export class Lexer {
         return new Token(TokenType.NumberLiteral, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
-    private static parse_identifier(text: string, start_idx: number): Token | null {
-        if (Lexer.norm_identifier_chars.indexOf(text[start_idx]) == -1) return null;
+    private static parse_name(text: string, start_idx: number): Token | null {
+        if (Lexer.normal_name_chars.indexOf(text[start_idx]) == -1) return null;
         let consumed = 1;
         while (text.length - start_idx - consumed > 0 &&
-                (Lexer.norm_identifier_chars + Lexer.num_chars).indexOf(text[start_idx + consumed]) != -1
+                (Lexer.normal_name_chars + Lexer.num_chars).indexOf(text[start_idx + consumed]) != -1
         ) {
             consumed++;
         }
 
-        return new Token(TokenType.Identifier, text.substring(start_idx, start_idx + consumed), start_idx);
+        return new Token(TokenType.Name, text.substring(start_idx, start_idx + consumed), start_idx);
     }
 
     private static parse_whitespace(text: string, start_idx: number): Token | null {
@@ -124,7 +125,7 @@ export class Lexer {
             Lexer.lex_exact_matches,
             Lexer.parse_whitespace,
             Lexer.parse_string_literal,
-            Lexer.parse_identifier,
+            Lexer.parse_name,
             Lexer.parse_number_literal,
         ].map(func => func(text, start_idx));
 
